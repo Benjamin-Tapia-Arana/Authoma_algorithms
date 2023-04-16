@@ -36,9 +36,7 @@ def automathon(fileName):
 
         # Se crean los diccionarios pertenecientes a cada estado
         elif(step == 0 and row != '\n'):
-            state = {'Name': row.strip('\n').strip('{>*}'),
-                        'Initial': 0,
-                        'Final': 0}
+            state = {'Name': row.strip('\n').strip('{>*}'), 'Initial': 0, 'Final': 0, 'epsilon': []}
             if(row[0] == '>'):
                 state['Initial'] = 1
             if(row[0] == '*' or row[1] == '*'):
@@ -54,13 +52,10 @@ def automathon(fileName):
         elif(step == 2 and row != '\n'):
             transition = row.strip('\n').split(' ')
             for i in transition:
-                i.strip('{').strip('}s')
+                i.strip('{').strip('}')
             for dict in automata:
                 if dict['Name'] == transition[0]:
                     dict[transition[1]].append(transition[3])
 
     textFile.close()
     return automata
-
-automata = automathon(input('File name: '))
-print(automata)
