@@ -99,6 +99,3 @@ def statesPairSet(automata):
             return pairs
     return recursive(automata, pairs)
 
-listAutomataAlphabet = automataTextReader()
-pairStates = statesPairSet(listAutomataAlphabet[0])
-print(pairStates)
