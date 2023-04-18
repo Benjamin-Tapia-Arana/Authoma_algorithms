@@ -7,7 +7,7 @@ isend=0
 
 
 # Lector del archivo
-f = open("nfae.txt", "r")
+f = open("nfae1.txt", "r")
 for x in f:
     if x == "Estados\n":
         flg=1
@@ -50,19 +50,29 @@ for x in f:
 f.close()
 
     #itera sobre todas las conecciones posibles solo mediante epsilons y añade los nodos a una lista
-def epsilon_enclosure(automata,nodo):
-    pasos=[]
+def epsilon_enclosure(automata,nodo, total):
+    pasos = []
     subnodo = modelo[nodo]
     if "epsilon" in subnodo:
         pasos=subnodo["epsilon"]
         for i in subnodo["epsilon"]:
             if i != nodo:
-                pasos.extend(epsilon_enclosure(automata,i))
-    return pasos
+                if i in total:
+                    return pasos, total
+                total.append(i)
+                
+                    
+                res = epsilon_enclosure(automata,i,total)
+                pasos.extend(res[0])
+                total.extend(res[1])
+                
+    return pasos, total
 
 
 for i in modelo.keys():                            
-    enclosure = epsilon_enclosure(modelo, i)
+    enclosure = []
+    enclosure = epsilon_enclosure(modelo, i, enclosure)[0]
+    enclosure = list(set(enclosure))
     if len(enclosure) > 0:
         modelo[i].pop("epsilon")
         for j in enclosure:
@@ -77,17 +87,35 @@ for i in modelo.keys():
 
 
 
-print(modelo)
-
-
-
-
-
-
-
         
-        
+# escribo en un archivo     
+ans = open("nfae_result.txt", "w")
 
+#en los estados cambia cuales son finales
+ans.write("Estados\n")
+for i in modelo.keys():
+    if modelo[i]["inicial"]==1:
+        ans.write(">")
+    if modelo[i]["final"]==1:
+        ans.write("*")
+    ans.write(i+"\n")
+
+#el alfabeto se mantiene constante
+ans.write("Alfabeto\n")
+for i in Alfabeto:
+    ans.write(i+"\n")
+
+#muevo todos los valores del diccionario
+ans.write("Transiciones\n")
+for i in modelo.keys():
+    for j in Alfabeto:    
+        try:
+            for k in modelo[i][j]:
+                ans.write(i+ " "+j+ " -> "+k+"\n")
+        except KeyError:
+            pass
+
+ans.close()
         
 
 
