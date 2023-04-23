@@ -6,8 +6,29 @@ isstart=0
 isend=0
 
 
+# MENÚ
+attempts = 10
+while True:
+    try:
+        fileName, newFileName = input('\nIngrese nombre del archivo a leer: '), input('Ingrese nombre del archivo a crear: ')
+        f = open(fileName, "r")
+        break
+    except FileNotFoundError:
+        print('\nEl archivo a leer no existe en la ruta especificada')
+        attempts -= 1
+        if(attempts <= 0):
+            print('\nDemasiados intentos inválidos\n\n***SE CERRÓ EL PROGRAMA***\n')
+            exit()
+        option = input('\n¿Desea reintentar? (S/N): ')
+        while True:
+            if option == 'S': break
+            elif option == 'N':
+                print('\n***SE CERRÓ EL PROGRAMA***\n')
+                exit()
+            else: option = input('\nIntroduzca una opción válida\n\n¿Desea reintentar? (S/N): ')
+
+
 # Lector del archivo
-f = open("nfae1.txt", "r")
 for x in f:
     if x == "Estados\n":
         flg=1
@@ -89,7 +110,7 @@ for i in modelo.keys():
 
         
 # escribo en un archivo     
-ans = open("nfae_result.txt", "w")
+ans = open(newFileName, "w")
 
 #en los estados cambia cuales son finales
 ans.write("Estados\n")

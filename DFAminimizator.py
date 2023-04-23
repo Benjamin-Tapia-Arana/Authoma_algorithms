@@ -49,6 +49,7 @@ def eliminateUselessStates(automata, alphabet):
     automata = copy.deepcopy(automata)
     alphabet = copy.deepcopy(alphabet)
     newAutomata = []
+    newStates = []
     uselessStates = []
     for i in automata:
         useless = None
@@ -62,9 +63,11 @@ def eliminateUselessStates(automata, alphabet):
         if useless:
             uselessStates.append(i['Name'])
     for state in automata:
-        if state['Name'] not in uselessStates: newAutomata.append(state)
-    if newAutomata == automata: return newAutomata
-    else: return eliminateUselessStates(newAutomata)
+        if state['Name'] not in uselessStates:
+            newAutomata.append(state)
+            newStates.append(state['Name'])
+    if newAutomata == automata: return [newAutomata, newStates]
+    else: return eliminateUselessStates(newAutomata, alphabet)
     
 # FUNCIÓN RECURSIVA QUE RETORNA UNA LISTA DE DICCIONARIOS COMPUESTAS POR CADA
 # POSIBLE PAREJA DE ESTADOS DEL AUTÓMATA (NO IMPORTA EL ORDEN Y NO HAY PAREJAS
@@ -165,7 +168,8 @@ def mergePairs(pairs, states):
 def DFAminimizator(fileName, newFileName):
     automataAlphabetStates = automataTextReader(fileName)
     automata, alphabet, states = automataAlphabetStates[0], automataAlphabetStates[1], automataAlphabetStates[2]
-    automata = eliminateUselessStates(automata, alphabet)
+    newAutomataStates = eliminateUselessStates(automata, alphabet)
+    automata, states = newAutomataStates[0], newAutomataStates[1]
     nonMarkSets = mergePairs(nonMarkPairsSetter(pairsMarker(automata, alphabet, statesPairSetter(automata))), states)
 
     # FUNCIÓN QUE ESCRIBE LOS CONJUNTOS DE LOS NUEVOS ESTADOS. SE LE ENTREGAN TRES PARÁMETROS;
